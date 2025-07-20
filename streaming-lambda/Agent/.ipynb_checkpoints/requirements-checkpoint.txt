@@ -1,0 +1,4 @@
+strands-agents==0.2.1
+strands-agents-tools==0.1.8
+tika==3.1.0
+fastapi==0.115.5
