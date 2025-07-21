@@ -3,3 +3,11 @@ phases:
   install:
     runtime-versions:
       python: 3.10
+    commands:
+    - DATETIME=$(date +"%Y-%m-%d-%H-%M-%S")
+  
+  pre-build:
+    commands:
+    - echo "Logging into ECR repository"
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 505184942745.dkr.ecr.us-east-1.amazonaws.com
+    
