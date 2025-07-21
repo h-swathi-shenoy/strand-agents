@@ -18,5 +18,5 @@ COPY . .
 
 ENV PATH="/opt/venv/bin/:$PATH"
 
-CMD ["main.lambda_handler"]
+CMD ["app.lambda_handler"]
 
