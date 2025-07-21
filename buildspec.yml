@@ -16,5 +16,11 @@ phases:
       - echo Build started on $DATETIME
       - echo Building the Docker image...
       - ls -larth
-      - docker build -t serverless-mcp . serverless-mcp/server
+      - docker build -t serverless-mcp serverless-mcp/server/
       - docker tag serverless-mcp:latest 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
+
+  post_build:
+    commands:
+      - echo Build completed on $DATETIME
+      - echo Pushing the Docker image...
+      - docker push 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
