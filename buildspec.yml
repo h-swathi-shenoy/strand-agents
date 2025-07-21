@@ -24,3 +24,8 @@ phases:
       - echo Build completed on $DATETIME
       - echo Pushing the Docker image...
       - docker push 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
+      - aws lambda update-function-code --function-name serverless-mcp --image-uri 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
+
+
+
+
