@@ -3,7 +3,7 @@ FROM public.ecr.aws/lambda/python:3.10 as lambda_builder
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-COPY requirements.txt main.py .
+COPY requirements.txt app.py .
 
 RUN python -m venv /opt/venv && . /opt/venv/bin/activate &&  pip install --no-cache-dir -r requirements.txt
     
