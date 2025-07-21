@@ -1,0 +1,4 @@
+pyjokes
+awslabs.mcp_lambda_handler
+strands-agents 
+strands-agents-tools
