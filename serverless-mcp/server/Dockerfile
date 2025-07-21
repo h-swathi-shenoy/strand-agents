@@ -17,6 +17,6 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 COPY . .
 
 ENV PATH="/opt/venv/bin/:$PATH"
-
+RUN python app.py
 CMD ["app.lambda_handler"]
 
