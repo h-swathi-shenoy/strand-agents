@@ -1,8 +1,19 @@
-from awslabs.mcp_lambda_handler import MCPLambdaHandler
 import logging
 import pyjokes
+import os
+import requests
+import os
+import boto3
+from awslabs.mcp_lambda_handler import MCPLambdaHandler
 from dotenv import load_dotenv
+from uuid import uuid4
 from qdrant_client import QdrantClient
+from dotenv import load_dotenv
+from langchain.chains import RetrievalQA
+from langchain.prompts import ChatPromptTemplate
+from langchain_qdrant import Qdrant
+from langchain_aws import ChatBedrock, ChatBedrockConverse
+
 load_dotenv("env.txt")
 
 logger = logging.getLogger()
@@ -16,17 +27,20 @@ qdrant_client = QdrantClient(
 
 mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
+
 @mcp_server.tool()
 def tell_me_jokes(query: str) -> str:
     """Searches the web for the given query and returns the results."""
     # In a real scenario, this would integrate with a web search API
     return pyjokes.get_joke()
 
+
 @mcp_server.tool()
 def get_current_time() -> str:
     """Returns the current date and time."""
     import datetime
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 @mcp_server.tool()
 def rag_retrieve_and_generate(query:str, collection_name:str):
@@ -58,11 +72,8 @@ def rag_retrieve_and_generate(query:str, collection_name:str):
     # Create prompt using the template
     prompt = ChatPromptTemplate.from_template(template)
 
-    # Initialize the LLM (GPT-3.5-turbo)
-#     llm35 = ChatOpenAI(temperature=0.0,
-#                        model="gpt-3.5-turbo",
-#                        max_tokens=512)
-    llm35 = ChatBedrockConverse(
+    # Initialize the LLM (aws-nova-pro)
+    llm_novapro = ChatBedrockConverse(
         client=bedrock_client,
         model="amazon.nova-pro-v1:0",
         temperature=0.1,
@@ -70,7 +81,7 @@ def rag_retrieve_and_generate(query:str, collection_name:str):
 
 
     # Create a retrieval QA chain
-    qa_d35 = RetrievalQA.from_chain_type(llm=llm35,
+    qa_d35 = RetrievalQA.from_chain_type(llm=llm_novapro,
                                          chain_type="stuff",
                                          chain_type_kwargs = {"prompt": prompt},
                                          retriever=retriever)
