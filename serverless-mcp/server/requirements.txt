@@ -1,5 +1,7 @@
 awslabs.mcp_lambda_handler
+langchain_aws
 langchain_community
+langchain_qdrant
 pyjokes
 python-dotenv
 qdrant-client
