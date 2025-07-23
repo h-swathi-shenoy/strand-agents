@@ -1,4 +1,8 @@
-pyjokes
 awslabs.mcp_lambda_handler
+langchain_community
+pyjokes
+python-dotenv
+qdrant-client
+pypdf
 strands-agents 
 strands-agents-tools
