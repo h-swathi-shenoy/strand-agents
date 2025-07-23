@@ -13,6 +13,7 @@ from langchain.chains import RetrievalQA
 from langchain.prompts import ChatPromptTemplate
 from langchain_qdrant import Qdrant
 from langchain_aws import ChatBedrock, ChatBedrockConverse
+from langchain.embeddings import BedrockEmbeddings
 
 load_dotenv("env.txt")
 
