@@ -1,10 +1,18 @@
 from awslabs.mcp_lambda_handler import MCPLambdaHandler
 import logging
 import pyjokes
+from dotenv import load_dotenv
+from qdrant_client import QdrantClient
+load_dotenv("env.txt")
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+QDRANT_API = os.getenv("QDRANT_APIKEY")
+qdrant_client = QdrantClient(
+        url=QDRANT_URL,
+        api_key=QDRANT_API, port=6333, grpc_port=6333
+    )
 
 mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
@@ -20,11 +28,66 @@ def get_current_time() -> str:
     import datetime
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+@mcp_server.tool()
+def rag_retrieve_and_generate(query:str, collection_name:str):
+
+    # Initialize vector store
+    vectorstore = Qdrant(client=qdrant_client,
+                        collection_name=collection_name,
+                        embeddings=bedrock_embeddings,
+                        vector_name="content")
+
+    # Define the prompt template
+    template = """
+
+    You are an assistant for question-answering tasks. \
+    Use the following pieces of retrieved context to answer the question. \
+    If you don't know the answer, just say that you don't know. \
+
+
+    Question: {question}
+    Context: {context}
+
+    Answer:
+
+    """
+
+    # Initialize retriever
+    retriever = vectorstore.as_retriever()
+
+    # Create prompt using the template
+    prompt = ChatPromptTemplate.from_template(template)
+
+    # Initialize the LLM (GPT-3.5-turbo)
+#     llm35 = ChatOpenAI(temperature=0.0,
+#                        model="gpt-3.5-turbo",
+#                        max_tokens=512)
+    llm35 = ChatBedrockConverse(
+        client=bedrock_client,
+        model="amazon.nova-pro-v1:0",
+        temperature=0.1,
+    )
+
+
+    # Create a retrieval QA chain
+    qa_d35 = RetrievalQA.from_chain_type(llm=llm35,
+                                         chain_type="stuff",
+                                         chain_type_kwargs = {"prompt": prompt},
+                                         retriever=retriever)
+
+    # Invoke the chain with the query to get the result
+    result = qa_d35.invoke({"query": query})["result"]
+    return result
+
 
 logger.info("Lambda handler has started!")
 
 
 def lambda_handler(event, context):
+    global collection_name, QDRANT_URL
+    headers = event.get("headers", {})
+    collection_name = headers.get("collection_name")
+    QDRANT_URL = headers.get("qdrant_url")
     result = mcp_server.handle_request(event, context)
     logger.info("Returning responses from mcp server")
     return result
