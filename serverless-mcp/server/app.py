@@ -20,10 +20,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 QDRANT_API = os.getenv("QDRANT_APIKEY")
-qdrant_client = QdrantClient(
-        url=QDRANT_URL,
-        api_key=QDRANT_API, port=6333, grpc_port=6333
-    )
+
 
 mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
@@ -46,6 +43,10 @@ def get_current_time() -> str:
 def rag_retrieve_and_generate(query:str, collection_name:str):
 
     # Initialize vector store
+    qdrant_client = QdrantClient(
+        url=QDRANT_URL,
+        api_key=QDRANT_API, port=6333, grpc_port=6333
+    )
     vectorstore = Qdrant(client=qdrant_client,
                         collection_name=collection_name,
                         embeddings=bedrock_embeddings,
