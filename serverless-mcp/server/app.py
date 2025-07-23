@@ -20,7 +20,10 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 QDRANT_API = os.getenv("QDRANT_APIKEY")
-
+bedrock_client = boto3.client(service_name='bedrock-runtime', 
+                              region_name='us-east-1')
+bedrock_embeddings = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1",
+                                       client=bedrock_client)
 
 mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
