@@ -32,20 +32,6 @@ mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
 
 @mcp_server.tool()
-def tell_me_jokes(query: str) -> str:
-    """Searches the web for the given query and returns the results."""
-    # In a real scenario, this would integrate with a web search API
-    return pyjokes.get_joke()
-
-
-@mcp_server.tool()
-def get_current_time() -> str:
-    """Returns the current date and time."""
-    import datetime
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-@mcp_server.tool()
 def rag_retrieve_and_generate(query:str, collection_name:str):
     """
     You are an assistant for question-answering tasks. \
@@ -67,8 +53,6 @@ def rag_retrieve_and_generate(query:str, collection_name:str):
     Context: {context}
 
     Answer:
-    
-    
     """
 
     # Initialize vector store
