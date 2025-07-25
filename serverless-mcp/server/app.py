@@ -21,7 +21,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 QDRANT_API = os.getenv("QDRANT_APIKEY")
-FIRECRAWL_API =. os.getenv("FIRECRAWL_APIKEY")
+FIRECRAWL_API = os.getenv("FIRECRAWL_APIKEY")
 
 bedrock_client = boto3.client(service_name='bedrock-runtime', 
                               region_name='us-east-1')
