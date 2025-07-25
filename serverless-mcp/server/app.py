@@ -14,6 +14,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_qdrant import Qdrant
 from langchain_aws import ChatBedrock, ChatBedrockConverse
 from langchain.embeddings import BedrockEmbeddings
+from typing import List, Optional
 
 load_dotenv("env.txt")
 
