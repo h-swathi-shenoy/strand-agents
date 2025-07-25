@@ -1,6 +1,6 @@
 import logging
 import pyjokes
-import os
+import os, json, requests
 import requests
 import os
 import boto3
@@ -21,6 +21,8 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 QDRANT_API = os.getenv("QDRANT_APIKEY")
+FIRECRAWL_API =. os.getenv("FIRECRAWL_APIKEY")
+
 bedrock_client = boto3.client(service_name='bedrock-runtime', 
                               region_name='us-east-1')
 bedrock_embeddings = BedrockEmbeddings(model_id="amazon.titan-embed-text-v1",
@@ -45,6 +47,29 @@ def get_current_time() -> str:
 
 @mcp_server.tool()
 def rag_retrieve_and_generate(query:str, collection_name:str):
+    """
+    You are an assistant for question-answering tasks. \
+    Use this tool only for Deep learning related queries only.
+    
+    Use the following pieces of retrieved context to answer the question. \
+    If you don't know the answer, just say that you don't know. \
+    Args:
+    ----
+    query (str) : User query to search for information.
+    collection_name (str): Collection name to search for in vector database
+    
+    Returns:
+    -----
+    Response for the user query based on context retirved from retriever.
+    
+
+    Question: {question}
+    Context: {context}
+
+    Answer:
+    
+    
+    """
 
     # Initialize vector store
     qdrant_client = QdrantClient(
@@ -62,6 +87,7 @@ def rag_retrieve_and_generate(query:str, collection_name:str):
     You are an assistant for question-answering tasks. \
     Use the following pieces of retrieved context to answer the question. \
     If you don't know the answer, just say that you don't know. \
+    
 
 
     Question: {question}
@@ -96,6 +122,45 @@ def rag_retrieve_and_generate(query:str, collection_name:str):
     return result
 
 
+@mcp_server.tool()
+def firecrawl_web_search_tool(query: str) -> List[str]:
+    """
+    Search for information on a given topic using Firecrawl.
+    Use this tool when the user asks a specific question not related to Deep Learning concepts.
+
+    Args:
+        query (str): The user query to search for information.
+
+    Returns:
+       str: Content for the use query.
+    """
+    if not isinstance(query, str):
+        raise TypeError("Query must be a string.")
+
+    url = "https://api.firecrawl.dev/v1/search"
+    api_key =FIRECRAWL_API
+
+    if not api_key:
+        return ["Error: FIRECRAWL_API_KEY environment variable is not set."]
+
+    payload = {"query": query, "timeout": 60000, "limit":1, "scrapeOptions": {
+      "formats": ["markdown"]
+    }}
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
+        # Assuming the API returns JSON with a key like "data" or "results"
+        # Adjust .get("data", ...) if the key is different
+        return response.json().get("data", ["No results found from web search."])[0]['markdown']
+    except requests.exceptions.RequestException as e:
+        return [f"Error connecting to Firecrawl API: {e}"]
+    
+    
 logger.info("Lambda handler has started!")
 
 

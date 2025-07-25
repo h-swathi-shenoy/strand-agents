@@ -8,3 +8,4 @@ qdrant-client
 pypdf
 strands-agents 
 strands-agents-tools
+firecrawl-py
