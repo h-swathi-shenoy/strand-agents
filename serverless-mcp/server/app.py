@@ -32,27 +32,20 @@ mcp_server = MCPLambdaHandler(name="mcp-lambda-server", version="1.0.0")
 
 
 @mcp_server.tool()
-def rag_retrieve_and_generate(query:str, collection_name:str):
+def rag_retrieve_and_generate(query:str):
     """
-    You are an assistant for question-answering tasks. \
-    Use this tool only for Deep learning related queries only.
-    
-    Use the following pieces of retrieved context to answer the question. \
-    If you don't know the answer, just say that you don't know. \
+    Retrieve context from Qdrant and generate an answer using Amazon Nova Pro.
+    Use this tool only when the query is about Deep Learning Concepts.
+
     Args:
     ----
-    query (str) : User query to search for information.
-    collection_name (str): Collection name to search for in vector database
-    
+    query (str): The question to retrieve context for.
+    collection_name (str): The name of the Qdrant collection to search in.
+
     Returns:
-    -----
-    Response for the user query based on context retirved from retriever.
-    
+    -------
+    str: The generated answer based on retrieved context.
 
-    Question: {question}
-    Context: {context}
-
-    Answer:
     """
 
     # Initialize vector store
