@@ -1,0 +1,12 @@
+awslabs.mcp_lambda_handler
+langchain_aws
+langchain_community
+langchain_qdrant
+pyjokes
+python-dotenv
+qdrant-client
+pypdf
+strands-agents 
+strands-agents-tools
+streamlit
+firecrawl-py
