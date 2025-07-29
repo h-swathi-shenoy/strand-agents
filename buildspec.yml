@@ -9,7 +9,7 @@ phases:
   pre_build:
     commands:
     - echo "Logging into ECR repository"
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 505184942745.dkr.ecr.us-east-1.amazonaws.com
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <aws-account-id>.dkr.ecr.<region>.amazonaws.com
   
   build:
     commands:
@@ -17,14 +17,14 @@ phases:
       - echo Building the Docker image...
       - ls -larth
       - docker build -t serverless-mcp serverless-mcp/server/
-      - docker tag serverless-mcp:latest 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
+      - docker tag serverless-mcp:latest <aws-account-id>.dkr.ecr.<region>..amazonaws.com/<repo-name>:latest
 
   post_build:
     commands:
       - echo Build completed on $DATETIME
       - echo Pushing the Docker image...
-      - docker push 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
-      - aws lambda update-function-code --function-name serverless-mcp --image-uri 505184942745.dkr.ecr.us-east-1.amazonaws.com/aws-genai:latest
+      - docker push <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<repo-name>:latest
+      - aws lambda update-function-code --function-name serverless-mcp --image-uri <aws-account-id>.dkr.ecr.<region>.amazonaws.com/<repo-name>:latest
 
 
 
